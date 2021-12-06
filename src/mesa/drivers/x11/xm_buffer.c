@@ -41,8 +41,6 @@
 
 #define XMESA_RENDERBUFFER 0x1234
 
-
-#if defined(USE_XSHM)
 static volatile int mesaXErrorFlag = 0;
 
 /**
@@ -56,6 +54,8 @@ mesaHandleXError(XMesaDisplay *dpy, XErrorEvent *event)
    mesaXErrorFlag = 1;
    return 0;
 }
+
+#if defined(USE_XSHM)
 
 /**
  * Allocate a shared memory XImage back buffer for the given XMesaBuffer.

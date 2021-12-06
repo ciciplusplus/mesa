@@ -840,7 +840,7 @@ if with_platform_x11
     pre_args += '-DHAVE_XCB_PLATFORM'
   endif
   if with_glx == 'xlib' or with_glx == 'gallium-xlib'
-    pre_args += '-DUSE_XSHM'
+    # pre_args += '-DUSE_XSHM'
   else
     pre_args += '-DGLX_INDIRECT_RENDERING'
     if with_glx_direct
@@ -1808,8 +1808,8 @@ dep_xlib_xrandr = null_dep
 if with_platform_x11
   if with_glx == 'xlib' or with_glx == 'gallium-xlib'
     dep_x11 = dependency('x11')
-    dep_xext = dependency('xext')
-    dep_xcb = dependency('xcb')
+#    dep_xext = dependency('xext')
+#    dep_xcb = dependency('xcb')
   elif with_glx == 'dri'
     dep_x11 = dependency('x11')
     dep_xext = dependency('xext')
@@ -1913,7 +1913,7 @@ endforeach
 gl_priv_reqs = []
 
 if with_glx == 'xlib' or with_glx == 'gallium-xlib'
-  gl_priv_reqs += ['x11', 'xext', 'xcb']
+  gl_priv_reqs += ['x11'] # , 'xext', 'xcb']
 elif with_glx == 'dri'
   gl_priv_reqs += [
     'x11', 'xext', 'xfixes', 'x11-xcb', 'xcb',
