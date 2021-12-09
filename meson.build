@@ -1807,7 +1807,8 @@ dep_xcb_shm = null_dep
 dep_xlib_xrandr = null_dep
 if with_platform_x11
   if with_glx == 'xlib' or with_glx == 'gallium-xlib'
-    dep_x11 = dependency('x11')
+    # dep_x11 = dependency('sdl2X11Emulation')
+    dep_x11 = cc.find_library('sdl2X11Emulation', dirs : ['/usr/local/lib'])
 #    dep_xext = dependency('xext')
 #    dep_xcb = dependency('xcb')
   elif with_glx == 'dri'
@@ -1913,7 +1914,7 @@ endforeach
 gl_priv_reqs = []
 
 if with_glx == 'xlib' or with_glx == 'gallium-xlib'
-  gl_priv_reqs += ['x11'] # , 'xext', 'xcb']
+  gl_priv_reqs += ['sdl2X11Emulation'] # , 'xext', 'xcb']
 elif with_glx == 'dri'
   gl_priv_reqs += [
     'x11', 'xext', 'xfixes', 'x11-xcb', 'xcb',
