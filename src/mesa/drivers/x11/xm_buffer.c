@@ -37,6 +37,7 @@
 #include "main/renderbuffer.h"
 #include "swrast/s_renderbuffer.h"
 #include "util/u_memory.h"
+#include "main/enums.h"
 
 
 #define XMESA_RENDERBUFFER 0x1234
@@ -357,7 +358,7 @@ xmesa_new_renderbuffer(struct gl_context *ctx, GLuint name,
          xrb->Base.Base.Format = MESA_FORMAT_B5G6R5_UNORM;
          break;
       default:
-         _mesa_warning(ctx, "Bad pixel format in xmesa_new_renderbuffer");
+         _mesa_warning(ctx, "Bad pixel format in xmesa_new_renderbuffer; format = %d", xmvis->undithered_pf);
          xrb->Base.Base.Format = MESA_FORMAT_B8G8R8A8_UNORM;
          break;
       }

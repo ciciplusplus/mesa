@@ -1950,7 +1950,7 @@ texture_error_check( struct gl_context *ctx,
    /* additional checks for depth textures */
    if (!_mesa_legal_texture_base_format_for_target(ctx, target, internalFormat)) {
       _mesa_error(ctx, GL_INVALID_OPERATION,
-                  "glTexImage%dD(bad target for texture)", dimensions);
+                  "glTexImage%dD(bad target for texture) target = %s, internalFormat = %s", dimensions, _mesa_enum_to_string(target), _mesa_enum_to_string(internalFormat));
       return GL_TRUE;
    }
 

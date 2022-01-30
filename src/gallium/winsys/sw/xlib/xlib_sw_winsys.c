@@ -143,60 +143,60 @@ alloc_shm(struct xlib_displaytarget *buf, unsigned size)
 }
 
 
-/**
- * Allocate a shared memory XImage back buffer for the given display target.
- */
-static void
-alloc_shm_ximage(struct xlib_displaytarget *xlib_dt,
-                 struct xlib_drawable *xmb,
-                 unsigned width, unsigned height)
-{
-   /*
-    * We have to do a _lot_ of error checking here to be sure we can
-    * really use the XSHM extension.  It seems different servers trigger
-    * errors at different points if the extension won't work.  Therefore
-    * we have to be very careful...
-    */
-   int (*old_handler)(Display *, XErrorEvent *);
+// /**
+//  * Allocate a shared memory XImage back buffer for the given display target.
+//  */
+// static void
+// alloc_shm_ximage(struct xlib_displaytarget *xlib_dt,
+//                  struct xlib_drawable *xmb,
+//                  unsigned width, unsigned height)
+// {
+//    /*
+//     * We have to do a _lot_ of error checking here to be sure we can
+//     * really use the XSHM extension.  It seems different servers trigger
+//     * errors at different points if the extension won't work.  Therefore
+//     * we have to be very careful...
+//     */
+//    int (*old_handler)(Display *, XErrorEvent *);
 
-   xlib_dt->tempImage = XShmCreateImage(xlib_dt->display,
-                                      xmb->visual,
-                                      xmb->depth,
-                                      ZPixmap,
-                                      NULL,
-                                      &xlib_dt->shminfo,
-                                      width, height);
-   if (xlib_dt->tempImage == NULL) {
-      shmctl(xlib_dt->shminfo.shmid, IPC_RMID, 0);
-      xlib_dt->shm = False;
-      return;
-   }
+//    xlib_dt->tempImage = XShmCreateImage(xlib_dt->display,
+//                                       xmb->visual,
+//                                       xmb->depth,
+//                                       ZPixmap,
+//                                       NULL,
+//                                       &xlib_dt->shminfo,
+//                                       width, height);
+//    if (xlib_dt->tempImage == NULL) {
+//       shmctl(xlib_dt->shminfo.shmid, IPC_RMID, 0);
+//       xlib_dt->shm = False;
+//       return;
+//    }
 
 
-   XErrorFlag = 0;
-   old_handler = XSetErrorHandler(handle_xerror);
-   /* This may trigger the X protocol error we're ready to catch: */
-   XShmAttach(xlib_dt->display, &xlib_dt->shminfo);
-   XSync(xlib_dt->display, False);
+//    XErrorFlag = 0;
+//    old_handler = XSetErrorHandler(handle_xerror);
+//    /* This may trigger the X protocol error we're ready to catch: */
+//    XShmAttach(xlib_dt->display, &xlib_dt->shminfo);
+//    XSync(xlib_dt->display, False);
 
-   /* Mark the segment to be destroyed, so that it is automatically destroyed
-    * when this process dies.  Needs to be after XShmAttach() for *BSD.
-    */
-   shmctl(xlib_dt->shminfo.shmid, IPC_RMID, 0);
+//    /* Mark the segment to be destroyed, so that it is automatically destroyed
+//     * when this process dies.  Needs to be after XShmAttach() for *BSD.
+//     */
+//    shmctl(xlib_dt->shminfo.shmid, IPC_RMID, 0);
 
-   if (XErrorFlag) {
-      /* we are on a remote display, this error is normal, don't print it */
-      XFlush(xlib_dt->display);
-      XErrorFlag = 0;
-      XDestroyImage(xlib_dt->tempImage);
-      xlib_dt->tempImage = NULL;
-      xlib_dt->shm = False;
-      (void) XSetErrorHandler(old_handler);
-      return;
-   }
+//    if (XErrorFlag) {
+//       /* we are on a remote display, this error is normal, don't print it */
+//       XFlush(xlib_dt->display);
+//       XErrorFlag = 0;
+//       XDestroyImage(xlib_dt->tempImage);
+//       xlib_dt->tempImage = NULL;
+//       xlib_dt->shm = False;
+//       (void) XSetErrorHandler(old_handler);
+//       return;
+//    }
 
-   xlib_dt->shm = True;
-}
+//    xlib_dt->shm = True;
+// }
 
 
 static void
@@ -204,12 +204,12 @@ alloc_ximage(struct xlib_displaytarget *xlib_dt,
              struct xlib_drawable *xmb,
              unsigned width, unsigned height)
 {
-   /* try allocating a shared memory image first */
-   if (xlib_dt->shm) {
-      alloc_shm_ximage(xlib_dt, xmb, width, height);
-      if (xlib_dt->tempImage)
-         return; /* success */
-   }
+   // /* try allocating a shared memory image first */
+   // if (xlib_dt->shm) {
+   //    alloc_shm_ximage(xlib_dt, xmb, width, height);
+   //    if (xlib_dt->tempImage)
+   //       return; /* success */
+   // }
 
    /* try regular (non-shared memory) image */
    xlib_dt->tempImage = XCreateImage(xlib_dt->display,
@@ -344,9 +344,9 @@ xlib_sw_display(struct xlib_drawable *xlib_drawable,
       ximage = xlib_dt->tempImage;
       ximage->data = xlib_dt->data;
 
-      /* _debug_printf("XSHM\n"); */
-      XShmPutImage(xlib_dt->display, xlib_drawable->drawable, xlib_dt->gc,
-                   ximage, 0, 0, 0, 0, xlib_dt->width, xlib_dt->height, False);
+      // /* _debug_printf("XSHM\n"); */
+      // XShmPutImage(xlib_dt->display, xlib_drawable->drawable, xlib_dt->gc,
+      //              ximage, 0, 0, 0, 0, xlib_dt->width, xlib_dt->height, False);
    }
    else {
       /* display image in Window */
@@ -412,13 +412,13 @@ xlib_displaytarget_create(struct sw_winsys *winsys,
    xlib_dt->stride = align(util_format_get_stride(format, width), alignment);
    size = xlib_dt->stride * nblocksy;
 
-   if (!debug_get_option_xlib_no_shm() &&
-       XQueryExtension(xlib_dt->display, "MIT-SHM", &ignore, &ignore, &ignore)) {
-      xlib_dt->data = alloc_shm(xlib_dt, size);
-      if (xlib_dt->data) {
-         xlib_dt->shm = True;
-      }
-   }
+   // if (!debug_get_option_xlib_no_shm() &&
+   //     XQueryExtension(xlib_dt->display, "MIT-SHM", &ignore, &ignore, &ignore)) {
+   //    xlib_dt->data = alloc_shm(xlib_dt, size);
+   //    if (xlib_dt->data) {
+   //       xlib_dt->shm = True;
+   //    }
+   // }
 
    if (!xlib_dt->data) {
       xlib_dt->data = align_malloc(size, alignment);

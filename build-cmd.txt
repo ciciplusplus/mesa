@@ -1,1 +1,1 @@
-sudo meson .. -Dplatforms=x11 -Ddri-drivers=[] -Dvulkan-drivers=[] -Dgallium-drivers=[] -Dglx=xlib -Degl=disabled -Dglx-direct=false -Dxlib-lease=disabled -Dbuild-tests=true --reconfigure
+sudo meson .. -Dplatforms=x11 -Ddri-drivers=[] -Dvulkan-drivers=[] -Dgallium-drivers=[] -Dglx=xlib -Degl=disabled -Dglx-direct=true -Dxlib-lease=disabled -Dbuild-tests=true --reconfigure
